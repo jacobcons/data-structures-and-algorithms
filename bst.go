@@ -24,6 +24,18 @@ func (t *bst) insert(value int) *bst {
 	return t
 }
 
+func (t *bst) search(value int) bool {
+	if t == nil {
+		return false
+	}
+	if value < t.value {
+		return t.left.search(value)
+	} else if value > t.value {
+		return t.right.search(value)
+	}
+	return true
+}
+
 func (t *bst) preOrder() {
 	if t == nil {
 		return
@@ -41,6 +53,10 @@ func main() {
 	t.insert(1)
 	t.insert(4)
 	t.insert(6)
-	fmt.Print("\n\n")
+
+	fmt.Println()
 	t.preOrder()
+
+	fmt.Println(t.search(2))
+	fmt.Println(t.search(9))
 }
