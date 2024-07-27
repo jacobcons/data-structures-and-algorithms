@@ -1,18 +1,21 @@
 package main
 
-import "fmt"
+import (
+	. "cmp"
+	"fmt"
+)
 
-type bst struct {
-	value int
-	left  *bst
-	right *bst
+type bst[T Ordered] struct {
+	value T
+	left  *bst[T]
+	right *bst[T]
 }
 
-func newBst(value int) *bst {
-	return &bst{value, nil, nil}
+func newBst[T Ordered](value T) *bst[T] {
+	return &bst[T]{value, nil, nil}
 }
 
-func (t *bst) insert(value int) *bst {
+func (t *bst[T]) insert(value T) *bst[T] {
 	if t == nil {
 		return newBst(value)
 	}
@@ -24,7 +27,7 @@ func (t *bst) insert(value int) *bst {
 	return t
 }
 
-func (t *bst) search(value int) bool {
+func (t *bst[T]) search(value T) bool {
 	if t == nil {
 		return false
 	}
@@ -36,7 +39,7 @@ func (t *bst) search(value int) bool {
 	return true
 }
 
-func (t *bst) preOrder() {
+func (t *bst[T]) preOrder() {
 	if t == nil {
 		return
 	}
