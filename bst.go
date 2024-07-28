@@ -1,65 +1,79 @@
-package main
+package ds
 
 import (
-	. "cmp"
-	"fmt"
+	"cmp"
 )
 
-type bst[T Ordered] struct {
-	value T
-	left  *bst[T]
-	right *bst[T]
+type Ordered = cmp.Ordered
+
+type Bst[T Ordered] struct {
+	Value T
+	Left  *Bst[T]
+	Right *Bst[T]
 }
 
-func newBst[T Ordered](value T) *bst[T] {
-	return &bst[T]{value, nil, nil}
+func NewBst[T Ordered](value T) *Bst[T] {
+	return &Bst[T]{value, nil, nil}
 }
 
-func (t *bst[T]) insert(value T) *bst[T] {
+func (t *Bst[T]) Insert(value T) *Bst[T] {
 	if t == nil {
-		return newBst(value)
+		return NewBst(value)
 	}
-	if value < t.value {
-		t.left = t.left.insert(value)
-	} else if value > t.value {
-		t.right = t.right.insert(value)
+	if value < t.Value {
+		t.Left = t.Left.Insert(value)
+	} else if value > t.Value {
+		t.Right = t.Right.Insert(value)
 	}
 	return t
 }
 
-func (t *bst[T]) search(value T) bool {
+func (t *Bst[T]) Search(value T) bool {
 	if t == nil {
 		return false
 	}
-	if value < t.value {
-		return t.left.search(value)
-	} else if value > t.value {
-		return t.right.search(value)
+	if value < t.Value {
+		return t.Left.Search(value)
+	} else if value > t.Value {
+		return t.Right.Search(value)
 	}
 	return true
 }
 
-func (t *bst[T]) preOrder() {
+func (t *Bst[T]) Delete(value T) *Bst[T] {
 	if t == nil {
-		return
+		return nil
 	}
-	fmt.Println(t.value)
-	t.left.preOrder()
-	t.right.preOrder()
+
+	if value < t.Value {
+		t.Left = t.Left.Delete(value)
+	} else if value > t.Value {
+		t.Right = t.Right.Delete(value)
+	} else {
+		if t.Left == nil && t.Right == nil {
+			return nil
+		} else if t.Left == nil {
+			return t.Right
+		} else if t.Right == nil {
+			return t.Left
+		} else {
+			current := t.Right
+			for current.Left != nil {
+				current = current.Left
+			}
+			t.Right = t.Right.Delete(current.Value)
+			t.Value = current.Value
+		}
+	}
+	return t
 }
 
-func main() {
-	t := newBst(3)
-	t.preOrder()
-	t.insert(2)
-	t.insert(5)
-	t.insert(1)
-	t.insert(4)
-	t.insert(6)
-
-	fmt.Println()
-	t.preOrder()
-
-	fmt.Println(t.search(2))
-	fmt.Println(t.search(9))
+func (t *Bst[T]) PreOrder() []T {
+	if t == nil {
+		return nil
+	}
+	result := []T{t.Value}
+	result = append(result, t.Left.PreOrder()...)
+	result = append(result, t.Right.PreOrder()...)
+	return result
 }
