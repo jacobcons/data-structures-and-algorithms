@@ -46,10 +46,17 @@ func (h *HashMap) String() string {
 
 func (h *HashMap) Put(key string, value interface{}) {
 	index := generateHashCode(key) % h.capacity
+
 	current := h.buckets[index]
-	if current == nil {
-		h.buckets[index] = &linkedList{&Pair{key, value}, nil}
+	for current != nil {
+		if current.value.Key == key {
+			current.value.Value = value
+			return
+		}
+		current = current.next
 	}
+
+	h.buckets[index] = &linkedList{&Pair{key, value}, h.buckets[index]}
 }
 
 // convert each character to ascii and write as base 31
@@ -69,5 +76,11 @@ func main() {
 	fmt.Println(h)
 
 	h.Put("james", 2)
+	fmt.Println(h)
+
+	h.Put("kat", 4)
+	fmt.Println(h)
+
+	h.Put("leo", 1)
 	fmt.Println(h)
 }
