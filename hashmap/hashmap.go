@@ -114,6 +114,7 @@ func populatedHashMap() *HashMap {
 	h.Put("leo", 1)
 	h.Put("dylan", 1)
 	h.Put("mason", 10)
+	h.Put("mason", 12)
 	return h
 }
 
