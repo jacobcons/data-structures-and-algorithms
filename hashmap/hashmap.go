@@ -45,9 +45,9 @@ func (h *HashMap) String() string {
 }
 
 func (h *HashMap) Put(key string, value interface{}) {
-	index := generateHashCode(key) % h.capacity
+	hash := generateHash(key, h.capacity)
+	current := h.buckets[hash]
 
-	current := h.buckets[index]
 	for current != nil {
 		if current.value.Key == key {
 			current.value.Value = value
@@ -56,31 +56,85 @@ func (h *HashMap) Put(key string, value interface{}) {
 		current = current.next
 	}
 
-	h.buckets[index] = &linkedList{&Pair{key, value}, h.buckets[index]}
+	h.buckets[hash] = &linkedList{&Pair{key, value}, h.buckets[hash]}
+}
+
+func (h *HashMap) Get(key string) (interface{}, bool) {
+	hash := generateHash(key, h.capacity)
+	current := h.buckets[hash]
+
+	for current != nil {
+		if current.value.Key == key {
+			return current.value.Value, true
+		}
+		current = current.next
+	}
+
+	return nil, false
+}
+
+func (h *HashMap) Remove(key string) bool {
+	hash := generateHash(key, h.capacity)
+	current := h.buckets[hash]
+	var prev *linkedList = nil
+
+	for current != nil {
+		if current.value.Key == key {
+			if current == h.buckets[hash] {
+				// head of list
+				h.buckets[hash] = current.next
+			} else {
+				// middle or end of list
+				prev.next = current.next
+			}
+			return true
+		}
+		prev = current
+		current = current.next
+	}
+
+	return false
 }
 
 // convert each character to ascii and write as base 31
-func generateHashCode(key string) uint32 {
+func generateHash(key string, capacity uint32) uint32 {
 	var hash uint32 = 0
 	for i := 0; i < len(key); i++ {
 		hash = 31*hash + uint32(key[i])
 	}
-	return hash
+	return hash % capacity
+}
+
+func populatedHashMap() *HashMap {
+	h := NewHashMap()
+
+	h.Put("bob", 3)
+	h.Put("james", 2)
+	h.Put("kat", 4)
+	h.Put("leo", 1)
+	h.Put("dylan", 1)
+	h.Put("mason", 10)
+	return h
 }
 
 func main() {
-	h := NewHashMap()
-	fmt.Println(h)
+	// put
+	h := populatedHashMap()
 
-	h.Put("bob", 3)
-	fmt.Println(h)
+	// get
+	fmt.Println("get tests")
+	strsToGet := []string{"bob", "mason", "leo", "kat", "mike"}
+	for _, str := range strsToGet {
+		fmt.Println(h.Get(str))
+	}
 
-	h.Put("james", 2)
+	// remove
+	fmt.Println("\nremove tests")
 	fmt.Println(h)
-
-	h.Put("kat", 4)
-	fmt.Println(h)
-
-	h.Put("leo", 1)
-	fmt.Println(h)
+	strsToRemove := []string{"leo", "kat", "mason", "bob", "mike"}
+	for _, str := range strsToRemove {
+		h.Remove(str)
+		fmt.Println(h)
+		h = populatedHashMap()
+	}
 }

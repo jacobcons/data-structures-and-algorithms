@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func PopulatedBst() *Bst[int] {
+func populatedBst() *Bst[int] {
 	t := NewBst(3)
 	t.Insert(2)
 	t.Insert(5)
@@ -16,7 +16,7 @@ func PopulatedBst() *Bst[int] {
 }
 
 func TestInsert(t *testing.T) {
-	got := PopulatedBst().PreOrder()
+	got := populatedBst().PreOrder()
 	want := []int{3, 2, 1, 5, 4, 6}
 	if slices.Equal(got, want) == false {
 		t.Errorf("got=%v, want=%v", got, want)
@@ -33,7 +33,7 @@ func TestSearch(t *testing.T) {
 		{0, false},
 		{7, false},
 	}
-	tree := PopulatedBst()
+	tree := populatedBst()
 	for _, test := range tests {
 		t.Run("", func(t *testing.T) {
 			got := tree.Search(test.valueToSearch)
@@ -57,7 +57,7 @@ func TestDelete(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run("", func(t *testing.T) {
-			tree := PopulatedBst()
+			tree := populatedBst()
 			got := tree.Delete(test.valueToDelete).PreOrder()
 			if slices.Equal(got, test.want) == false {
 				t.Errorf("tree.Delete(%v) = %v, want %v", test.valueToDelete, got, test.want)
