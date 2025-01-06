@@ -29,11 +29,11 @@ func (l *linkedList) String() string {
 type HashMap struct {
 	buckets  []*linkedList
 	capacity uint32
+	size     uint32
 }
 
-func NewHashMap() *HashMap {
-	const INITIAL_CAPACITY = 4
-	return &HashMap{make([]*linkedList, INITIAL_CAPACITY), INITIAL_CAPACITY}
+func NewHashMap(capacity uint32) *HashMap {
+	return &HashMap{make([]*linkedList, capacity), capacity, 0}
 }
 
 func (h *HashMap) String() string {
@@ -45,6 +45,11 @@ func (h *HashMap) String() string {
 }
 
 func (h *HashMap) Put(key string, value interface{}) {
+	const LOAD_FACTOR = 1.5
+	if float32(h.size)/float32(h.capacity) >= LOAD_FACTOR {
+		h.resize()
+	}
+
 	hash := generateHash(key, h.capacity)
 	current := h.buckets[hash]
 
@@ -57,6 +62,22 @@ func (h *HashMap) Put(key string, value interface{}) {
 	}
 
 	h.buckets[hash] = &linkedList{&Pair{key, value}, h.buckets[hash]}
+	h.size++
+}
+
+func (h *HashMap) resize() {
+	newCapacity := h.capacity * 2
+	newHashMap := NewHashMap(newCapacity)
+	for _, bucket := range h.buckets {
+		p := bucket
+		for p != nil {
+			newHashMap.Put(p.value.Key, p.value.Value)
+			p = p.next
+		}
+	}
+
+	h.buckets = newHashMap.buckets
+	h.capacity = newHashMap.capacity
 }
 
 func (h *HashMap) Get(key string) (interface{}, bool) {
@@ -106,7 +127,7 @@ func generateHash(key string, capacity uint32) uint32 {
 }
 
 func populatedHashMap() *HashMap {
-	h := NewHashMap()
+	h := NewHashMap(4)
 
 	h.Put("bob", 3)
 	h.Put("james", 2)
@@ -138,4 +159,15 @@ func main() {
 		fmt.Println(h)
 		h = populatedHashMap()
 	}
+
+	// resize
+	h.Put("blue", 10)
+	h.Put("red", 10)
+	h.Put("yellow", 10)
+	h.Put("pink", 10)
+	h.Put("black", 10)
+	h.Put("orange", 10)
+	h.Put("purple", 10)
+	h.Put("green", 10)
+	fmt.Println(h)
 }
