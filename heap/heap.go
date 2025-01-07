@@ -19,12 +19,7 @@ func (h *Heap[T]) add(item T) {
 	h.Items = append(h.Items, item)
 	currentIndex := len(h.Items) - 1
 	var parentIndex int
-	for true {
-		// if reached root
-		if currentIndex == 1 {
-			break
-		}
-
+	for currentIndex != 1 {
 		parentIndex = currentIndex / 2
 		if h.Items[parentIndex] > h.Items[currentIndex] {
 			h.Items[currentIndex], h.Items[parentIndex] = h.Items[parentIndex], h.Items[currentIndex]
