@@ -15,7 +15,7 @@ func NewHeap[T Ordered]() *Heap[T] {
 	return &Heap[T]{[]T{zeroValue}}
 }
 
-func (h *Heap[T]) add(item T) {
+func (h *Heap[T]) Add(item T) {
 	h.Items = append(h.Items, item)
 	currentIndex := len(h.Items) - 1
 	var parentIndex int
@@ -28,4 +28,20 @@ func (h *Heap[T]) add(item T) {
 		}
 		currentIndex = parentIndex
 	}
+}
+
+func (h *Heap[T]) RemoveMin() T {
+	return h.Items[0]
+}
+
+func (h *Heap[T]) GetMin() (T, bool) {
+	if h.Size() == 0 {
+		var zeroValue T
+		return zeroValue, false
+	}
+	return h.Items[1], true
+}
+
+func (h *Heap[T]) Size() int {
+	return len(h.Items) - 1
 }
