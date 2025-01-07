@@ -34,6 +34,7 @@ func TestAdd(t *testing.T) {
 	h.add(1)
 	h.add(3)
 	h.add(2)
+	t.Log(h.Items)
 
 	if hasMinHeapProperty(h) == false {
 		t.Errorf("Adding some values doesn't maintain min-heap property")
