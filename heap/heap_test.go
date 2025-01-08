@@ -54,7 +54,7 @@ func TestRemoveMin(t *testing.T) {
 	expectedMinimums := []int{1, 2, 3, 5}
 	expectedSize := len(expectedMinimums)
 	for _, expectedMinimum := range expectedMinimums {
-		actualMinimum := h.RemoveMin()
+		actualMinimum, _ := h.RemoveMin()
 		expectedSize--
 		if actualMinimum != expectedMinimum {
 			t.Errorf("actualMinimum=%v, expectedMinimum=%v", actualMinimum, expectedMinimum)
@@ -67,6 +67,11 @@ func TestRemoveMin(t *testing.T) {
 		if hasMinHeapProperty(h) == false {
 			t.Errorf("removing minimums doesn't maintain min-heap property")
 		}
+	}
+
+	_, success := h.RemoveMin()
+	if success != false {
+		t.Errorf("RemoveMin() should be unsuccessfull when heap is empty")
 	}
 }
 
