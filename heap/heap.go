@@ -21,11 +21,11 @@ func (h *Heap[T]) Add(item T) {
 	var parentIndex int
 	for currentIndex != 1 {
 		parentIndex = currentIndex / 2
-		if h.Items[parentIndex] > h.Items[currentIndex] {
-			h.Items[currentIndex], h.Items[parentIndex] = h.Items[parentIndex], h.Items[currentIndex]
-		} else {
+		if h.Items[parentIndex] <= h.Items[currentIndex] {
 			break
 		}
+
+		h.Items[currentIndex], h.Items[parentIndex] = h.Items[parentIndex], h.Items[currentIndex]
 		currentIndex = parentIndex
 	}
 }
