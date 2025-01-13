@@ -13,8 +13,8 @@ func (g *Graph) AddEdge(v int, w int) {
 	g.List[w] = append(g.List[w], v)
 }
 
-func (g *Graph) DFS(v int) *PathData {
-	pathData := NewPathData(v)
+func (g *Graph) DFS(s int) *PathData {
+	pathData := NewPathData(s)
 	var dfsHelper func(v int)
 	dfsHelper = func(v int) {
 		pathData.Visited[v] = true
@@ -26,15 +26,29 @@ func (g *Graph) DFS(v int) *PathData {
 			}
 		}
 	}
-	dfsHelper(v)
+	dfsHelper(s)
 	return pathData
 
 }
 
-func (g *Graph) BFS(v int) *PathData {
-	pathData := NewPathData(v)
-	return pathData
+func (g *Graph) BFS(s int) *PathData {
+	pathData := NewPathData(s)
+	queue := []int{}
+	queue = append(queue, s)
+	pathData.Visited[s] = true
+	for len(queue) > 0 {
+		v := queue[0]
+		queue = queue[1:]
+		for _, w := range g.List[v] {
+			if pathData.Visited[w] == false {
+				queue = append(queue, w)
+				pathData.Visited[w] = true
+				pathData.EdgeTo[w] = v
+			}
+		}
+	}
 
+	return pathData
 }
 
 type PathData struct {
@@ -67,4 +81,11 @@ func PathTo(pathData *PathData, v int) []int {
 
 func prepend[T any](arr []T, item T) []T {
 	return append([]T{item}, arr...)
+}
+
+func shift[T any](arr []T) []T {
+	if len(arr) < 1 {
+		return arr
+	}
+	return arr[1:]
 }
